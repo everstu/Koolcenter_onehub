@@ -1,0 +1,7 @@
+KoolCenter Onehub Changelog for HND platform
+===========================================
+1.0
+   - add	onehub v0.14.7
+   - add	增加程序初始化启动和完全启动检测
+   - add	新增指定端口功能、指定数据库功能、指定缓存功能、公网开关功能。
+   - binver	onehub二进制v0.14.7版本（arm64版本，采用upx --lzma --brute压缩）
