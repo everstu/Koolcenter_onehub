@@ -1,5 +1,8 @@
 KoolCenter Onehub Changelog for HND platform
 ===========================================
+1.0.2
+   - update	onehub二进制更新到v0.14.17版本
+
 1.0.1
    - update	onehub二进制更新到v0.14.8版本
 
