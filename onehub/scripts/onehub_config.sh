@@ -10,14 +10,14 @@ LOCK_FILE=/var/lock/onehub_run.lock
 BASH=${0##*/}
 ARGS=$@
 #初始化配置变量
-port=#监听端口
-userTokenSecret=#用户Apitoken密钥
-sessionSecret=#Session密钥
-sqlDsn=#数据库地址
-redisConnString=#Redis连接地址
-channelTestFrequency=#频道测试频率
-globalApiRateLimit=#全局Api速率限制
-globalWebRateLimit=#全局Web速率限制
+port= #监听端口
+userTokenSecret= #用户Apitoken密钥
+sessionSecret= #Session密钥
+sqlDsn= #数据库地址
+redisConnString= #Redis连接地址
+channelTestFrequency= #频道测试频率
+globalApiRateLimit= #全局Api速率限制
+globalWebRateLimit= #全局Web速率限制
 
 set_lock() {
 	exec 233> ${LOCK_FILE}
@@ -56,7 +56,7 @@ check_run_log(){
 	local IS_INIT
 	local i=40
 	until [ -n "${REAL_RUN}" ]; do
-		usleep 300000
+		usleep 500000
 		i=$(($i - 1))
 		# 检测日志文件是否存在
 		if [ -f "${ONEHUB_RUN_LOG_DIR}one-hub.log" ]; then
@@ -157,15 +157,21 @@ random_password() {
 genDefaultConfig(){
 	# onehub_port 为空时，设置默认值
 	if [ -z "${onehub_port}" ]; then
+		echo_date "ℹ️ 服务端口为空，设置默认值为3000"
 		dbus set onehub_port="3000"
+		onehub_port=$(dbus get onehub_port)
 	fi
 	# onehub_user_token_secret 为空时，设置默认值
 	if [ -z "${onehub_user_token_secret}" ]; then
+		echo_date "ℹ️ 用户API加密密钥为空，设置默认值为随机密码"
 		dbus set onehub_user_token_secret=$(random_password 32)
+		onehub_user_token_secret=$(dbus get onehub_user_token_secret)
 	fi
 	# onehub_session_secret 为空时，设置默认值
 	if [ -z "${onehub_session_secret}" ]; then
+		echo_date "ℹ️ 后台登录会话机密密钥为空，设置默认值为随机密码"
 		dbus set onehub_session_secret=$(random_password 16)
+		onehub_session_secret=$(dbus get onehub_session_secret)
 	fi
 	# 给变量赋值
 	port=${onehub_port}
@@ -180,6 +186,9 @@ genDefaultConfig(){
 
 
 start_process() {
+	# init default config
+	genDefaultConfig
+	# delete old log
 	rm -rf ${ONEHUB_RUN_LOG_DIR}
 	if [ "${onehub_watchdog}" == "1" ]; then
 		echo_date "🟠启动 OneHub 进程，开启进程实时守护..."
@@ -257,7 +266,7 @@ start() {
 	stop_process
 
 	# 3. gen default config
-	genDefaultConfig
+#	genDefaultConfig
 
 	# 4. gen version info everytime
 	/koolshare/bin/onehub --version > ${OnehubBaseDir}/.version
