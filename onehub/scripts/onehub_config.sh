@@ -169,7 +169,7 @@ genDefaultConfig(){
 	fi
 	# onehub_session_secret 为空时，设置默认值
 	if [ -z "${onehub_session_secret}" ]; then
-		echo_date "ℹ️ 后台登录会话机密密钥为空，设置默认值为随机密码"
+		echo_date "ℹ️ 后台登录会话加密密钥为空，设置默认值为随机密码"
 		dbus set onehub_session_secret=$(random_password 16)
 		onehub_session_secret=$(dbus get onehub_session_secret)
 	fi
